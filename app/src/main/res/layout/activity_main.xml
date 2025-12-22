@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <llc.berserkr.androidfilecache.FlagsView
-        android:id="@+id/talkie_view"
+        android:id="@+id/flags_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
