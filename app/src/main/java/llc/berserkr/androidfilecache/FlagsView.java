@@ -480,7 +480,11 @@ public class FlagsView extends SurfaceView implements SurfaceHolder.Callback, Ru
 
                         if (thumbnail != null) {
 
-                            long update = thumbnailUpdate.get(cell);
+                            Long update = thumbnailUpdate.get(cell);
+
+                            if(update == null) {
+                                update = 0L;
+                            }
 
                             int alpha = (int) ((Math.min(System.currentTimeMillis() - update, 1000) / 1000f) * 255);
 

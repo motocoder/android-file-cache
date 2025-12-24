@@ -327,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.d("Flags", "loading flags done");
                 final ValueConvertingCache<String, Bitmap, InputStream> valueConvertingCache
-                        = new ValueConvertingCache<>(keyConvertingCache, new InputStreamToSizedBitmapConverter(getDir("image-cache", MODE_PRIVATE), 400, 300));
+                        = new ValueConvertingCache<>(keyConvertingCache, new InputStreamToSizedBitmapConverter(getDir("image-cache", MODE_PRIVATE), 1200, 800));
 
                 mainHandler.post(() -> {
                     Toast.makeText(MainActivity.this, "loaded flags", Toast.LENGTH_SHORT).show();
