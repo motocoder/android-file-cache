@@ -16,6 +16,10 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,9 +42,13 @@ import llc.berserkr.cache.exception.ResourceException;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Used to load the 'androidfilecache' library on application startup.
+    private static final Logger logger = LoggerFactory.getLogger(MainActivity.class);
+
     static {
+
+        // Used to load the 'androidfilecache' library on application startup.
         System.loadLibrary("androidfilecache");
+
     }
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -325,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
                     keyConvertingCache.put("zw", getDrawableInputStream(this, R.mipmap.zw));
                 }
 
-                Log.d("Flags", "loading flags done");
+                logger.debug( "loading flags done");
                 final ValueConvertingCache<String, Bitmap, InputStream> valueConvertingCache
                         = new ValueConvertingCache<>(keyConvertingCache, new InputStreamToSizedBitmapConverter(getDir("image-cache", MODE_PRIVATE), 1200, 800));
 
@@ -335,25 +343,32 @@ public class MainActivity extends AppCompatActivity {
 
                 ExecutorService threads = Executors.newCachedThreadPool();
 
-                Log.d("Flags", "kicking off flag loaders");
+                logger.debug( "kicking off flag loaders");
                 for (int threadCount = 0; threadCount < 10; threadCount++) {
 
                     threads.execute(() -> {
+
+                        int count = 0;
 
                         while (true) {
                             try {
 
                                 final String key = flagsView.getRandomKey(keys);
 
+                                final long startTime = System.currentTimeMillis();
                                 final Bitmap bitmap = valueConvertingCache.get(key);
+
+                                if(count++ % 100 == 0) {
+                                    logger.info("loaded from cache " + (System.currentTimeMillis() - startTime));
+                                }
 
                                 if(bitmap == null) {
 
-                                    Log.d("Flags", "pushing was null " + key);
+                                    logger.error("pushing was null " + key);
                                     try {
                                         Thread.sleep(100);
                                     } catch (InterruptedException e) {
-                                        Log.e("Flags","interrupted", e);
+                                        logger.debug("interrupted", e);
                                     }
                                     continue;
                                 }
@@ -361,7 +376,7 @@ public class MainActivity extends AppCompatActivity {
                                 flagsView.pushThumbnail(key, bitmap);
 
                             } catch (ResourceException e) {
-                                Log.e("Flags", "flag loader blew up.", e);
+                                logger.error( "flag loader blew up.", e);
                                 throw new RuntimeException(e);
                             }
                         }
@@ -369,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             catch (Throwable e) {
-                Log.e("Flags", "flag loader blew up.", e);
+                logger.error("flag loader blew up.", e);
             }
 
         });
@@ -389,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
         final Bitmap bitmap = loadBitmap(context, drawableResId);
 
         if(bitmap == null) {
-            Log.e("Flags", "bitmap is null");
+            logger.error("bitmap is null");
             throw new IllegalStateException("bitmap null");
         }
 
@@ -405,7 +420,7 @@ public class MainActivity extends AppCompatActivity {
          bitmap.recycle();
 
          if(byteArray == null) {
-             Log.e("Flags", "byteArray is null");
+             logger.error("byteArray is null");
              throw new RuntimeException("failed to get byte array");
          }
         return new ByteArrayInputStream(byteArray);
