@@ -1,6 +1,6 @@
 package llc.berserkr.androidfilecache;
 
-import static llc.berserkr.cache.hash.SegmentedStreamingFile.delete;
+import static llc.berserkr.cache.hash.SegmentedFile.delete;
 import static llc.berserkr.cache.util.DataUtils.copyAndCount;
 
 import android.graphics.Bitmap;
