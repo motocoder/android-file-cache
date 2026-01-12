@@ -57,7 +57,7 @@ dependencies {
     implementation libs.appcompat
     implementation libs.material
     implementation libs.constraintlayout
-    implementation("llc.berserkr:logging:1.0.0")
+    implementation("llc.berserkr:logging:1.0.1")
     implementation("org.slf4j:slf4j-api:2.0.17")
 
     implementation("llc.berserkr:java-file-cache:1.0.0")
